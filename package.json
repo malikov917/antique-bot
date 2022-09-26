@@ -1,0 +1,12 @@
+{
+    "scripts": {
+        "start": "node ./index.js"
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "moment": "^2.29.1",
+        "mongoose": "^5.11.17",
+        "puppeteer": "^7.1.0",
+        "telegraf": "^4.0.3"
+    }
+}
