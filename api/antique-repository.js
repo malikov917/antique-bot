@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-const antiquesSchema = require('./antiques-schema');
+const antiquesSchema = require('./antique-schema');
 const ANTIQUES = 'antiques';
 const Antique = mongoose.model(ANTIQUES, antiquesSchema, ANTIQUES);
+
+// (!) main file to handle ANTIQUES collection in database
 
 // example how to use:
 // const res = await antiqueRepository.addItem(item);

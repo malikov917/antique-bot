@@ -1,4 +1,4 @@
-const antiqueRepository = require('./api/antiques-repository');
+const antiqueRepository = require('./api/antique-repository');
 const mongoose = require('mongoose');
 const bot = require('./bot/bot');
 const connectionString = 'mongodb+srv://admin:admin@cluster0.ic1zc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
