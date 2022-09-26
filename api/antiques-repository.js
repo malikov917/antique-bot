@@ -3,7 +3,11 @@ const antiquesSchema = require('./antiques-schema');
 const ANTIQUES = 'antiques';
 const Antique = mongoose.model(ANTIQUES, antiquesSchema, ANTIQUES);
 
-async function addAntiqueItem(item) {
+// example how to use:
+// const res = await antiqueRepository.addItem(item);
+// const res1 = await antiqueRepository.findById('123');
+
+async function addItem(item) {
   return new Antique({
     _id: item._id,
     title: item.title,
@@ -26,13 +30,10 @@ async function removeById(_id) {
 
 async function getSavedIds() {
   const antiques = await Antique.find();
-  return antiques.map(item => {
-    console.log(item);
-    return item._id
-  });
+  return antiques.map(item => item._id);
 }
 
-exports.addAntiqueItem = addAntiqueItem;
+exports.addItem = addItem;
 exports.findById = findById;
 exports.updateById = updateById;
 exports.getSavedIds = getSavedIds;

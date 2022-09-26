@@ -26,7 +26,7 @@ const get2HandLinks = async () => {
     await browser.close();
     return links.map(link => getParsedLink(link));
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 };
 
