@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const { getParsedLink } = require('./parse-links');
+const { getParsedLink } = require('../services/parse-links');
 const websiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true';
 
 // todo сделать возможность принимать ссылку с фильтрами, давать ей название и это будет новый список, который будет постоянно обновляться

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const antiquesSchema = require('./antiquesSchema');
+const antiquesSchema = require('./antiques-schema');
 const ANTIQUES = 'antiques';
 const Antique = mongoose.model(ANTIQUES, antiquesSchema, ANTIQUES);
 
@@ -24,7 +24,7 @@ async function removeById(_id) {
   return Antique.deleteOne({ _id });
 }
 
-async function getAntiqueIds() {
+async function getSavedIds() {
   const antiques = await Antique.find();
   return antiques.map(item => {
     console.log(item);
@@ -35,4 +35,4 @@ async function getAntiqueIds() {
 exports.addAntiqueItem = addAntiqueItem;
 exports.findById = findById;
 exports.updateById = updateById;
-exports.getAntiqueIds = getAntiqueIds;
+exports.getSavedIds = getSavedIds;
