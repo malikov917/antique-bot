@@ -16,7 +16,7 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "Run Debut TEST.JS",
+            "name": "Run Debug TEST.JS",
             "skipFiles": [
                 "<node_internals>/**"
             ],
