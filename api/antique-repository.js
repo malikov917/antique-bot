@@ -35,7 +35,12 @@ async function getSavedIds() {
   return antiques.map(item => item._id);
 }
 
+async function getAll() {
+  return await Antique.find();
+}
+
 exports.addItem = addItem;
 exports.findById = findById;
 exports.updateById = updateById;
 exports.getSavedIds = getSavedIds;
+exports.getAll = getAll;
