@@ -4,6 +4,7 @@ const botToken = '5792214658:AAHvy-xh8GKy1LAppTpDnlFi1B7jusqcGP4';
 
 // example how to use
 // await bot.sendMessage(`Bot started scrapping: ${(new Date()).toUTCString()}`);
+// for sending links you can use [Link](example.com) pattern
 
 const sendMessage = (textMessage) => {
     const bot = new Telegraf(botToken);

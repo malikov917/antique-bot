@@ -39,8 +39,13 @@ async function getAll() {
   return await Antique.find();
 }
 
+async function saveBulk(array) {
+  return await Antique.insertMany(array);
+}
+
 exports.addItem = addItem;
 exports.findById = findById;
 exports.updateById = updateById;
 exports.getSavedIds = getSavedIds;
 exports.getAll = getAll;
+exports.saveBulk = saveBulk;
