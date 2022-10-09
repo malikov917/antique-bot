@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const bot = require('./bot/bot');
 const connectionString = 'mongodb+srv://admin:admin@cluster0.ic1zc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 
-(async () => {
+(async() => {
     const connectionSettings = {
         useNewUrlParser: true,
         useUnifiedTopology: true
     };
-    
+
     await mongoose.connect(connectionString, connectionSettings);
 
     mongoose.connection.on('error', (err) => {
@@ -18,9 +18,9 @@ const connectionString = 'mongodb+srv://admin:admin@cluster0.ic1zc.mongodb.net/m
 
     try {
         const res = await antiqueRepository.getAll();
-        const message = `In our DB we have ${res.length} saved items!`;
+        const message = `In our DB we have ${res.length} saved items\\! by Gleb`;
         console.log(message)
-        bot.sendMessage(message).then();
+        await bot.sendMessage(message);
     } catch (e) {
         console.log(e);
     }
