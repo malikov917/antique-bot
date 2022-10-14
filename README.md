@@ -28,3 +28,6 @@ npm install
 - If nothing goes well, fix it
 
 ![alt text](./images/testjs-example-of-working-program.jpg)
+
+4. Check .env file version (current is "14.10.2022")
+   (You can download it in Telegram group and place it in root folder)
