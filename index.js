@@ -1,9 +1,14 @@
+// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
+require('dotenv').config();
 const { get2HandLinks } = require('./scrappers/get-2hand-links');
 const bot = require('./bot/bot');
 const mongoose = require('mongoose');
 const antiqueRepository = require('./api/antique-repository');
 
-
+const connectionSettings = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+};
 
 function mapToPost(rawItem) {
   return {
@@ -31,9 +36,6 @@ async function runWebScrapper() {
   process.exit(0);
 }
 
-// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
-require('dotenv').config();
-
-mongoose.connect(process.env.ANTIQUE_DB_STRING)
+mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
     .then(() => runWebScrapper())
     .catch(errors => console.error(errors));
