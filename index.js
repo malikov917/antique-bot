@@ -20,7 +20,8 @@ async function runWebScrapper() {
   const links = await get2HandLinks(); // better scrap full posts instead of just links
   const antiqueIds = await antiqueRepository.getSavedIds();
   const filteredNewLinks = links
-      .filter(link => !antiqueIds.includes(link));
+      .filter(link => !antiqueIds.includes(link))
+      .reverse();
   for (const link of filteredNewLinks) {
     await bot.sendMessage(`[link](${link})`);
   }
