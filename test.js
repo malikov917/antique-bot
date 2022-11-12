@@ -2,17 +2,15 @@
 const antiqueRepository = require('./api/antique-repository');
 const mongoose = require('mongoose');
 const bot = require('./bot/bot');
+// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
+require('dotenv').config();
 
 (async () => {
-    
-    // dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
-    require('dotenv').config();
-
     const connectionSettings = {
         useNewUrlParser: true,
         useUnifiedTopology: true
     };
-    
+
     await mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings);
 
     mongoose.connection.on('error', (err) => {
@@ -22,9 +20,9 @@ const bot = require('./bot/bot');
 
     try {
         const res = await antiqueRepository.getAll();
-        const message = `In our DB we have ${res.length} saved items!`;
+        const message = `In our DB we have ${res.length} saved items\\!`;
         console.log(message)
-        bot.sendMessage(message).then();
+        await bot.sendMessage(message);
     } catch (e) {
         console.log(e);
     }
