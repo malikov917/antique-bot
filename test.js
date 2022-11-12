@@ -1,9 +1,8 @@
-
+// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
+require('dotenv').config();
 const antiqueRepository = require('./api/antique-repository');
 const mongoose = require('mongoose');
 const bot = require('./bot/bot');
-// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
-require('dotenv').config();
 
 (async () => {
     const connectionSettings = {
