@@ -1,7 +1,9 @@
+
 const antiqueRepository = require('./api/antique-repository');
 const mongoose = require('mongoose');
 const bot = require('./bot/bot');
-const connectionString = 'mongodb+srv://admin:admin@cluster0.ic1zc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+// dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
+require('dotenv').config();
 
 (async () => {
     const connectionSettings = {
@@ -9,7 +11,7 @@ const connectionString = 'mongodb+srv://admin:admin@cluster0.ic1zc.mongodb.net/m
         useUnifiedTopology: true
     };
 
-    await mongoose.connect(connectionString, connectionSettings);
+    await mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings);
 
     mongoose.connection.on('error', (err) => {
         console.error(`Mongoose connection error: ${err}`);

@@ -1,6 +1,8 @@
-const { Telegraf } = require('telegraf')
-const channel = '-1001794163567';
-const botToken = '5792214658:AAHvy-xh8GKy1LAppTpDnlFi1B7jusqcGP4';
+const { Telegraf } = require('telegraf');
+
+//Is a '-' sign necessary in "channel" string at the begining?
+const channel = process.env.ANTIQUE_TG_CHANNEL;
+const botToken = process.env.ANTIQUE_TG_BOT_TOKEN;
 
 // example how to use
 // await bot.sendMessage(`Bot started scrapping: ${(new Date()).toUTCString()}`);
