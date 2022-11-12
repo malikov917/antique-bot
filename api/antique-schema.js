@@ -7,6 +7,7 @@ const antiques = new mongoose.Schema({
   title: { type: String },
   description: { type: String },
   price: { type: String },
-});
+  status: { type: String, enum: ['POSTED', 'NEW'], default: 'NEW' }
+}, { timestamps: true });
 
 module.exports = antiques;

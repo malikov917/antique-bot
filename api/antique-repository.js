@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const antiquesSchema = require('./antique-schema');
-const ANTIQUES = 'antiques';
-const Antique = mongoose.model(ANTIQUES, antiquesSchema, ANTIQUES);
+const ANTIQUES_NAME = ANTIQUES_COLLECTION = 'antiques';
+const Antique = mongoose.model(ANTIQUES_NAME, antiquesSchema, ANTIQUES_COLLECTION);
 
 // (!) main file to handle ANTIQUES collection in database
 
@@ -15,6 +15,7 @@ async function addItem(item) {
     title: item.title,
     description: item.description,
     price: item.price,
+    status: item.status || 'NEW'
   }).save();
 }
 
@@ -36,7 +37,11 @@ async function getSavedIds() {
 }
 
 async function getAll() {
-  return await Antique.find();
+  return Antique.find();
+}
+
+async function saveBulk(array) {
+  return Antique.insertMany(array);
 }
 
 exports.addItem = addItem;
@@ -44,3 +49,4 @@ exports.findById = findById;
 exports.updateById = updateById;
 exports.getSavedIds = getSavedIds;
 exports.getAll = getAll;
+exports.saveBulk = saveBulk;

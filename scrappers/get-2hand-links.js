@@ -7,8 +7,11 @@ const websiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language
 
 const get2HandLinks = async () => {
   try {
+    // открываем браузер
     const browser = await puppeteer.launch({ headless: false, slowMo: 250, devtools: true });
+    // открываем новую вкладку
     const page = await browser.newPage();
+    // переходим на страницу страницу
     await page.goto(websiteUrl, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('#gdpr-consent-banner-accept-button');
     await page.click('#gdpr-consent-banner-accept-button');
@@ -16,17 +19,23 @@ const get2HandLinks = async () => {
     // скоуп page.evaluate оооочень трики, функции и переменные туда не пробрасывать
     // дебаг невозможен, использовать только для парсинга
     const links = await page.evaluate(() => {
+      // обращаемся к странице и берем элемент ul (парент) со всеми li (чайлды)
       let rawList = document.querySelector('ul.mp-Listings');
+      // если найдено и есть чайлды
       if (rawList?.childNodes?.length) {
         const childNodes = rawList.childNodes;
+        // выбираем из них только <li>
         const liList = Array.from(childNodes).filter(el => el.tagName === 'LI');
+        // пробегаем и вытаскиваем только ссылки
         return liList.map(li => li.firstChild.href);
       } else return [];
     });
+    // закрываем браузер
     await browser.close();
-    return links.map(link => getParsedLink(link));
+    // фильтруем пустые ссылки и чистим ссылку от излишних параметров
+    return links.filter(x => !!x).map(link => getParsedLink(link));
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 };
 
