@@ -1,6 +1,6 @@
 // dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
 require('dotenv').config();
-const { get2HandLinks } = require('./scrappers/get-2hand-links');
+const { scrapItems } = require('./scrappers/get-2hand-links');
 const bot = require('./bot/bot');
 const mongoose = require('mongoose');
 const antiqueRepository = require('./api/antique-repository');
@@ -10,28 +10,29 @@ const connectionSettings = {
   useUnifiedTopology: true
 };
 
-function mapToPost(rawItem) {
+function mapBeforeSaving(rawItem) {
   return {
-    _id: rawItem,
-    title: '',
+    _id: rawItem.href,
+    title: rawItem.title,
     description: '',
-    price: '',
+    price: rawItem.price,
     status: 'POSTED'
   }
 }
 
+const mock = ['https://www.2dehands.be/v/antiek-en-kunst/antiek-meubels-stoelen-en-sofa-s/a110845522-peter-opsvik-stokke-stoel-tripp-trapp'];
+
 async function runWebScrapper() {
-  // await bot.sendMessage(`Bot started scrapping at: ${(new Date()).toUTCString()}`);
-  const links = await get2HandLinks(); // better scrap full posts instead of just links
-  const antiqueIds = await antiqueRepository.getSavedIds();
-  const filteredNewLinks = links
-      .filter(link => !antiqueIds.includes(link))
+  const items = await scrapItems();
+  const oldIds =  await antiqueRepository.getSavedIds(); // или mock;
+  const newItems = items
+      .filter(item => !oldIds.includes(item.href))
       .reverse();
-  for (const link of filteredNewLinks) {
-    await bot.sendMessage(`[link](${link})`);
+  for (const item of newItems) {
+    await bot.sendMessage(`[link](${item.href})`);
   }
-  filteredNewPosts = filteredNewLinks.map(x => mapToPost(x))
-  await antiqueRepository.saveBulk(filteredNewPosts);
+  const mappedItems = newItems.map(x => mapBeforeSaving(x))
+  await antiqueRepository.saveBulk(mappedItems);
 
   process.exit(0);
 }
