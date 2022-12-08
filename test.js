@@ -20,7 +20,7 @@ const bot = require('./bot/bot');
     try {
         const res = await antiqueRepository.getAll();
         const message = `In our DB we have ${res.length} saved items\\!`;
-        console.log(message)
+        console.log(message);
         await bot.sendMessage(message);
     } catch (e) {
         console.log(e);

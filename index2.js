@@ -2,29 +2,20 @@
 require('dotenv').config();
 const { scrapItems } = require('./scrappers/get-2hand-links');
 const bot = require('./bot/bot');
+const { mapBeforeSaving } = require('./services/utils')
 const mongoose = require('mongoose');
-const antiqueRepository = require('./api/antique-repository');
+let antiqueRepository = require('./api/antique-repository');
+const mockAntiqueRepository = require('./api/mock-antique-repository');
+// antiqueRepository = mockAntiqueRepository;
 
 const connectionSettings = {
   useNewUrlParser: true,
   useUnifiedTopology: true
 };
 
-function mapBeforeSaving(rawItem) {
-  return {
-    _id: rawItem.href,
-    title: rawItem.title,
-    description: '',
-    price: rawItem.price,
-    status: 'POSTED'
-  }
-}
-
-const mock = ['https://www.2dehands.be/v/antiek-en-kunst/antiek-meubels-stoelen-en-sofa-s/a110845522-peter-opsvik-stokke-stoel-tripp-trapp'];
-
 async function runWebScrapper() {
   const items = await scrapItems();
-  const oldIds =  await antiqueRepository.getSavedIds(); // или mock;
+  const oldIds = await antiqueRepository.getSavedIds();
   const newItems = items
       .filter(item => !oldIds.includes(item.href))
       .reverse();
