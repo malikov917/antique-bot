@@ -3,12 +3,10 @@ const { getParsedLink } = require('../services/utils');
 const { autoScroll } = require('../services/puppeteer/scroll-page.service')
 const websiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true';
 
-// todo сделать возможность принимать ссылку с фильтрами, давать ей название и это будет новый список, который будет постоянно обновляться
-// todo сделать все управление ботом через бота, а не через сайт
-
-const scrapItems = async (url = websiteUrl) => {
+const scrapItems = async (url) => {
+  url = url ? url : websiteUrl;
   try {
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 2000 });
     await page.goto(url, { waitUntil: 'domcontentloaded' });
@@ -35,7 +33,8 @@ const scrapItems = async (url = websiteUrl) => {
     await browser.close();
     return items
         .filter(x => x)
-        .map(item => ({...item, href: getParsedLink(item.href)}));
+        .reverse()
+        .map(item => ({...item, href: getParsedLink(item.href)}))
   } catch (error) {
     console.error(error);
   }
