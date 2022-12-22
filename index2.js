@@ -14,6 +14,7 @@ const connectionSettings = {
 };
 
 async function runWebScrapper() {
+  console.log('example of console.log()')
   const items = await scrapItems();
   const oldIds = await antiqueRepository.getSavedIds();
   const newItems = items
