@@ -6,7 +6,10 @@ const websiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language
 const scrapItems = async (url) => {
   url = url ? url : websiteUrl;
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 2000 });
     await page.goto(url, { waitUntil: 'domcontentloaded' });

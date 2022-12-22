@@ -3,7 +3,7 @@
     "productName": "antique-bot",
     "version": "1.0.0",
     "scripts": {
-        "start": "node ./index.js",
+        "start": "node ./index2.js",
         "start:ui": "electron-forge start",
         "package": "electron-forge package",
         "make": "electron-forge make",
