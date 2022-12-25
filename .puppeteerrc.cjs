@@ -1,8 +1,8 @@
 require('dotenv').config();
+const { join } = require('path');
 
-if (process.env.BOT_ENVIRONMENT == 'heroku') {
-    const {join} = require('path');
-    module.exports = {
-        cacheDirectory: join(__dirname, '.cache', 'puppeteer'),
-    };
-}
+const isHeroku = process.env.BOT_ENVIRONMENT === 'heroku';
+
+module.exports = isHeroku
+    ? { cacheDirectory: join(__dirname, '.cache', 'puppeteer') }
+    : { };
