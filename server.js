@@ -9,11 +9,14 @@ const browserP = puppeteer.launch({
 });
 
 app.get("/", (req, res) => {
-    // FIXME move to a worker task; see https://devcenter.heroku.com/articles/node-redis-workers
+    res.send(`<p>Our simple UI is here. Right now its ${Date()}</p>`);
+});
+
+app.get("/check-puppeteer", (req, res) => {
     let page;
     (async () => {
         page = await (await browserP).newPage();
-        await page.setContent(`<p>web running at ${Date()}</p>`);
+        await page.setContent(`<p>Puppeteer is working at ${Date()}</p>`);
         res.send(await page.content());
     })()
         .catch(err => res.sendStatus(500))

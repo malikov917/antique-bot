@@ -14,7 +14,6 @@ const connectionSettings = {
 };
 
 async function runWebScrapper() {
-  console.log('example of console.log()')
   const items = await scrapItems();
   const oldIds = await antiqueRepository.getSavedIds();
   const newItems = items
@@ -29,6 +28,8 @@ async function runWebScrapper() {
   process.exit(0);
 }
 
+console.log('start scrap')
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
     .then(() => runWebScrapper())
+    .then(() => console.log('finish scrap'))
     .catch(errors => console.error(errors));
