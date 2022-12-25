@@ -21,7 +21,7 @@ app.get("/test", (req, res) => {
         ? { cacheDirectory: join(__dirname, '.cache', 'puppeteer') }
         : { };
 
-    console.log(res, 'res')
+    console.log(result, 'result')
 
     res.send(`
         <p>Our simple UI is here. Right now its ${Date()}</p>
