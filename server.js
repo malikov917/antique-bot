@@ -5,30 +5,27 @@ const { join } = require('path');
 const app = express();
 app.set("port", process.env.PORT || 5000);
 
+const uiLinks = `<a href="/">HOME</a>
+                <a href="/check-puppeteer">check puppeteer</a>
+                <a href="/test">test</a>`;
+
 app.get("/", (req, res) => {
-    res.send(`<p>Our simple UI is here. Right now its ${Date()}</p>`);
+    res.send(`
+        <p>You are on the HOME page. . Right now its ${Date()}</p>
+        ${uiLinks}
+    `);
 });
 
 app.get("/test", (req, res) => {
     const isHeroku = process.env.BOT_ENVIRONMENT === 'heroku';
 
-    console.log(process.env.BOT_ENVIRONMENT, 'process.env.BOT_ENVIRONMENT')
-    console.log(isHeroku, 'isHeroku')
-
-    console.log(process.env, 'process.env')
-
     const result = isHeroku
         ? { cacheDirectory: join(__dirname, '.cache', 'puppeteer') }
         : { };
 
-    console.log(result, 'result')
-
     res.send(`
-        <p>Our simple UI is here. Right now its ${Date()}</p>
-        <div>${process.env.BOT_ENVIRONMENT} process.env.BOT_ENVIRONMENT</div>
-        <div>${isHeroku} isHeroku</div>
-        <div>${result} result</div>
-        <div>${process.env} process.env</div>
+        <p>You are on the TEST page. Right now its ${Date()}</p>
+        ${uiLinks}
     `);
 });
 
@@ -42,7 +39,12 @@ app.get("/check-puppeteer", (req, res) => {
     (async () => {
         page = await (await browserP).newPage();
         await page.setContent(`<p>Puppeteer is working at ${Date()}</p>`);
-        res.send(await page.content());
+        const contentFromPuppeteer = await page.content();
+        res.send(`
+            <p>You are on the CHECK-PUPPETEER page. Right now its ${Date()}</p>
+            <div>${contentFromPuppeteer} Content From Puppeteer</div>
+            ${uiLinks}
+        `);
     })()
         .catch(err => res.sendStatus(500))
         .finally(() => page.close())
