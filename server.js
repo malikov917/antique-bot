@@ -29,12 +29,14 @@ app.get("/test", (req, res) => {
     `);
 });
 
+const browserP = puppeteer.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
+
 app.get("/check-puppeteer", (req, res) => {
     let page;
 
-    const browserP = puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+
 
     (async () => {
         page = await (await browserP).newPage();
