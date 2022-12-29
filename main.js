@@ -13,14 +13,22 @@ const connectionSettings = {
   useUnifiedTopology: true
 };
 
-async function runWebScrapper() {
-  console.log('start scrap')
-  const items = await scrapItems();
-  const filteredItems = await filterItems(items);
-  await publishItemsInBot(filteredItems);
-  await saveItemsInDB(filteredItems);
-  console.log('finish scrap');
+const linkList = [
+    'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true'
+]
 
+async function runWebScrapper(linkList) {
+  console.log('start scrap');
+
+  for (let link of linkList) {
+
+    const items = await scrapItems(link);
+    const filteredItems = await filterItems(items);
+    await publishItemsInBot(filteredItems);
+    await saveItemsInDB(filteredItems);
+  }
+
+  console.log('finish scrap');
   process.exit(0);
 }
 
@@ -37,10 +45,10 @@ async function filterItems(items) {
 
 async function publishItemsInBot(filteredItems) {
   for (const item of filteredItems) {
-    await bot.sendMessage(`[link](${item.href})`);
+    await bot.sendMessage(`[${item.title}](${item.href})`);
   }
 }
 
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
-    .then(() => runWebScrapper())
+    .then(() => runWebScrapper(linkList))
     .catch(errors => console.error(errors));
