@@ -15,17 +15,28 @@ const connectionSettings = {
 
 async function runWebScrapper() {
   const items = await scrapItems();
-  const oldIds = await antiqueRepository.getSavedIds();
-  const newItems = items
-      .filter(item => !oldIds.includes(item.href))
-      .reverse();
-  for (const item of newItems) {
-    await bot.sendMessage(`[link](${item.href})`);
-  }
-  const mappedItems = newItems.map(x => mapBeforeSaving(x))
-  await antiqueRepository.saveBulk(mappedItems);
+  const filteredItems = await filterItems(items);
+  await publishItemsInBot(filteredItems);
+  await saveItemsInDB(filteredItems);
 
   process.exit(0);
+}
+
+async function saveItemsInDB(filteredItems) {
+  const mappedItems = filteredItems.map(x => mapBeforeSaving(x))
+  await antiqueRepository.saveBulk(mappedItems);
+}
+
+async function filterItems(items) {
+  const antiques = await antiqueRepository.getAll();
+  const oldIds = antiques.map(item => item._id);
+  return items.filter(item => !oldIds.includes(item.href));
+}
+
+async function publishItemsInBot(filteredItems) {
+  for (const item of filteredItems) {
+    await bot.sendMessage(`[link](${item.href})`);
+  }
 }
 
 console.log('start scrap')

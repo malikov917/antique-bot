@@ -14,7 +14,13 @@ function mapBeforeSaving(rawItem) {
       price: rawItem.price,
       status: 'POSTED'
     }
-  }
+}
+
+async function waitMilliseconds(milliseconds) {
+    return await new Promise((resolve) =>
+        setTimeout(() => resolve(), milliseconds))
+}
 
 exports.getParsedLink = getParsedLink;
 exports.mapBeforeSaving = mapBeforeSaving;
+exports.waitMilliseconds = waitMilliseconds;

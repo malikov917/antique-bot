@@ -1,10 +1,10 @@
 const { Telegraf } = require('telegraf');
 
-//Is a '-' sign necessary in "channel" string at the begining?
 const channel = process.env.ANTIQUE_TG_CHANNEL;
 const botToken = process.env.ANTIQUE_TG_BOT_TOKEN;
 
-// example how to use
+// HOW TO USE:
+//
 // await bot.sendMessage(`Bot started scrapping: ${(new Date()).toUTCString()}`);
 // for sending links you can use [Link](example.com) pattern
 

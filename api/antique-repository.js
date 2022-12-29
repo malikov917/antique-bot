@@ -31,11 +31,6 @@ async function removeById(_id) {
   return Antique.deleteOne({ _id });
 }
 
-async function getSavedIds() {
-  const antiques = await Antique.find();
-  return antiques.map(item => item._id);
-}
-
 async function getAll() {
   return Antique.find();
 }
@@ -47,6 +42,5 @@ async function saveBulk(array) {
 exports.addItem = addItem;
 exports.findById = findById;
 exports.updateById = updateById;
-exports.getSavedIds = getSavedIds;
 exports.getAll = getAll;
 exports.saveBulk = saveBulk;

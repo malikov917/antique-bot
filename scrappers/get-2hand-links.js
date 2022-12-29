@@ -1,46 +1,50 @@
 const puppeteer = require('puppeteer');
-const { getParsedLink } = require('../services/utils');
+const { getParsedLink, waitMilliseconds } = require('../services/utils');
 const { autoScroll } = require('../services/puppeteer/scroll-page.service')
-const websiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true';
+
+const defaultWebsiteUrl = 'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true';
+const puppeteerOptions = { args: ['--no-sandbox', '--disable-setuid-sandbox'] };
+const productList = 'ul.hz-Listings';
+const acceptCookieButton = '#gdpr-consent-banner-accept-button';
+
+async function getItemsFromPage(page) {
+  // скоуп page.evaluate оооочень трики, функции и переменные туда не пробрасывать, дебаг невозможен, использовать только для парсинга
+  return await page.evaluate(() => {
+    let rawList = document.querySelector(productList);
+    if (rawList?.childNodes?.length) {
+      const childNodes = rawList.childNodes;
+      const liList = Array.from(childNodes).filter(el => el.tagName === 'LI');
+      return liList.map((li, index) => ({
+        orderOnPage: index,
+        href: li.firstChild.href,
+        title: li.firstChild.querySelector('.hz-Listing-title').innerText,
+        price: li.firstChild.querySelector('.hz-Listing-price').innerText
+      }));
+    } else return [];
+  });
+}
+
+function filterReverseAndMapItems(items) {
+  return items
+      .filter(x => x)
+      .map(item => ({ ...item, href: getParsedLink(item.href) }));
+}
 
 const scrapItems = async (url) => {
-  url = url ? url : websiteUrl;
+  url = url ? url : defaultWebsiteUrl;
   try {
-    console.log('lesgoooo')
-
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    console.log('lesgoooo w2222')
-
+    const browser = await puppeteer.launch(puppeteerOptions);
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 2000 });
     await page.goto(url, { waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('#gdpr-consent-banner-accept-button');
-    await page.click('#gdpr-consent-banner-accept-button');
-    await page.waitForSelector('ul.hz-Listings');
-    await page.mouse.move(700, 400);
+    await page.waitForSelector(acceptCookieButton);
+    await page.click(acceptCookieButton);
+    await page.waitForSelector(productList);
     await autoScroll(page);
-    await page.waitForTimeout(1000);
-    // скоуп page.evaluate оооочень трики, функции и переменные туда не пробрасывать, дебаг невозможен, использовать только для парсинга
-    const items = await page.evaluate(() => {
-      let rawList = document.querySelector('ul.hz-Listings');
-      if (rawList?.childNodes?.length) {
-        const childNodes = rawList.childNodes;
-        const liList = Array.from(childNodes).filter(el => el.tagName === 'LI');
-        return liList.map((li, index) => ({
-          orderOnPage: index,
-          href: li.firstChild.href,
-          title: li.firstChild.querySelector('.hz-Listing-title').innerText,
-          price: li.firstChild.querySelector('.hz-Listing-price').innerText
-        }));
-      } else return [];
-    });
+    await waitMilliseconds(1000);
+    const items = await getItemsFromPage(page);
     await browser.close();
-    return items
-        .filter(x => x)
-        .reverse()
-        .map(item => ({...item, href: getParsedLink(item.href)}))
+    return filterReverseAndMapItems(items)
   } catch (error) {
     console.error(error);
   }

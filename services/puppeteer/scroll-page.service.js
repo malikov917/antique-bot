@@ -4,7 +4,8 @@
 // 3. scroll until item
 
 async function autoScroll(page) {
-    const res = await page.evaluate(async () => {
+    await page.mouse.move(700, 400);
+    await page.evaluate(async () => {
         await new Promise((resolve) => {
             let totalHeight = 0;
             const distance = 100;
