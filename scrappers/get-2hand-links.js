@@ -9,7 +9,7 @@ const acceptCookieButton = '#gdpr-consent-banner-accept-button';
 
 async function getItemsFromPage(page) {
   // скоуп page.evaluate оооочень трики, функции и переменные туда не пробрасывать, дебаг невозможен, использовать только для парсинга
-  return await page.evaluate(() => {
+  return await page.evaluate((productList) => {
     let rawList = document.querySelector(productList);
     if (rawList?.childNodes?.length) {
       const childNodes = rawList.childNodes;
@@ -21,7 +21,7 @@ async function getItemsFromPage(page) {
         price: li.firstChild.querySelector('.hz-Listing-price').innerText
       }));
     } else return [];
-  });
+  }, productList);
 }
 
 function filterReverseAndMapItems(items) {

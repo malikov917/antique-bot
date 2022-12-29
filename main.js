@@ -14,10 +14,12 @@ const connectionSettings = {
 };
 
 async function runWebScrapper() {
+  console.log('start scrap')
   const items = await scrapItems();
   const filteredItems = await filterItems(items);
   await publishItemsInBot(filteredItems);
   await saveItemsInDB(filteredItems);
+  console.log('finish scrap');
 
   process.exit(0);
 }
@@ -39,8 +41,6 @@ async function publishItemsInBot(filteredItems) {
   }
 }
 
-console.log('start scrap')
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
     .then(() => runWebScrapper())
-    .then(() => console.log('finish scrap'))
     .catch(errors => console.error(errors));
