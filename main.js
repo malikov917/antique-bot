@@ -21,7 +21,6 @@ async function runWebScrapper(linkList) {
   console.log('start scrap');
 
   for (let link of linkList) {
-
     const items = await scrapItems(link);
     const filteredItems = await filterItems(items);
     await publishItemsInBot(filteredItems);
@@ -45,7 +44,8 @@ async function filterItems(items) {
 
 async function publishItemsInBot(filteredItems) {
   for (const item of filteredItems) {
-    await bot.sendMessage(`[${item.title}](${item.href})`);
+    const titleWithLink = `<a href="${item.href}">${item.title}</a> <b>${item.price}</b>`;
+    await bot.sendHTMLMessage(titleWithLink);
   }
 }
 
