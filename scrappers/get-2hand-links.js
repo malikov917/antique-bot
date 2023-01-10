@@ -7,6 +7,21 @@ const puppeteerOptions = { args: ['--no-sandbox', '--disable-setuid-sandbox'] };
 const productList = 'ul.hz-Listings';
 const acceptCookieButton = '#gdpr-consent-banner-accept-button';
 
+// write a function which uses puppeteer to scrape the 2hand.be website
+function GENERATEDgetItemsFromPage(page) {
+  return page.evaluate(() => {
+    const items = [];
+    const products = document.querySelectorAll('ul.hz-Listings > li');
+    products.forEach(product => {
+      const title = product.querySelector('h3.hz-Listing-title > a').innerText;
+      const price = product.querySelector('div.hz-Listing-price > span').innerText;
+      const href = product.querySelector('h3.hz-Listing-title > a').href;
+      items.push({ title, price, href });
+    });
+    return items;
+  });
+}
+
 async function getItemsFromPage(page) {
   // скоуп page.evaluate оооочень трики, функции и переменные туда не пробрасывать, дебаг невозможен, использовать только для парсинга
   return await page.evaluate((productList) => {

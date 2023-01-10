@@ -18,8 +18,38 @@ const linkList = [
     'https://www.2dehands.be/q/stokke+varier/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300|searchInTitleAndDescription:true',
     'https://www.2dehands.be/q/kniestoel/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
     'https://www.2dehands.be/q/oude+lamp/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
-    'https://www.2dehands.be/q/antieke+luster/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300'
+    'https://www.2dehands.be/q/antieke+luster/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
+    'https://www.2dehands.be/q/weimar+porselein/#Language:all-languages|postcode:3300'
 ]
+
+function getRandomElementAndRemoveIt(array) {
+  const index = Math.floor(Math.random() * array.length);
+  return array.splice(index, 1)[0];
+}
+
+async function scrapRandomLink() {
+    const link = getRandomElementAndRemoveIt(linkList);
+    return await scrapItems(link);
+}
+
+async function collectFresh15Items() {
+    const items = [];
+    while (items.length < 15 && linkList.length > 0) {
+        const newItems = await scrapRandomLink();
+        const filteredItems = await filterItems(newItems);
+        items.push(...filteredItems);
+    }
+    return items.slice(0, 15);
+}
+
+async function runNewWebScrapper() {
+  console.log('start scrap');
+  const items = await collectFresh15Items();
+  await publishItemsInBot(items);
+  await saveItemsInDB(items);
+  console.log('finish scrap');
+  process.exit(0);
+}
 
 async function runWebScrapper(linkList) {
   console.log('start scrap');
@@ -53,6 +83,11 @@ async function publishItemsInBot(filteredItems) {
   }
 }
 
+// mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
+//     .then(() => runWebScrapper(linkList))
+//     .catch(errors => console.error(errors));
+
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
-    .then(() => runWebScrapper(linkList))
+    .then(() => runNewWebScrapper())
     .catch(errors => console.error(errors));
+

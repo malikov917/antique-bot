@@ -12,7 +12,8 @@ const charactersToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+
 
 const sendMessage = (textMessage) => {
     const bot = new Telegraf(botToken);
-    return bot.telegram.sendMessage(channel, textMessage, { parse_mode: 'MarkdownV2' });
+    const escapedMessage = charactersToEscape.reduce((acc, char) => acc.replace(char, `\\${char}`), textMessage);
+    return bot.telegram.sendMessage(channel, escapedMessage, { parse_mode: 'MarkdownV2' });
 }
 
 const sendHTMLMessage = (textMessage) => {
