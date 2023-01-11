@@ -42,25 +42,11 @@ async function collectFresh15Items() {
     return items.slice(0, 15);
 }
 
-async function runNewWebScrapper() {
+async function runWebScrapper() {
   console.log('start scrap');
   const items = await collectFresh15Items();
   await publishItemsInBot(items);
   await saveItemsInDB(items);
-  console.log('finish scrap');
-  process.exit(0);
-}
-
-async function runWebScrapper(linkList) {
-  console.log('start scrap');
-
-  for (let link of linkList) {
-    const items = await scrapItems(link);
-    const filteredItems = await filterItems(items);
-    await publishItemsInBot(filteredItems);
-    await saveItemsInDB(filteredItems);
-  }
-
   console.log('finish scrap');
   process.exit(0);
 }
@@ -83,11 +69,7 @@ async function publishItemsInBot(filteredItems) {
   }
 }
 
-// mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
-//     .then(() => runWebScrapper(linkList))
-//     .catch(errors => console.error(errors));
-
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
-    .then(() => runNewWebScrapper())
+    .then(() => runWebScrapper())
     .catch(errors => console.error(errors));
 
