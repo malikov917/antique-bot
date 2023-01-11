@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const antiquesSchema = require('./antique-schema');
 const ANTIQUES_NAME = ANTIQUES_COLLECTION = 'antiques';
 const Antique = mongoose.model(ANTIQUES_NAME, antiquesSchema, ANTIQUES_COLLECTION);
+let cachedAllItems = [];
 
 // (!) main file to handle ANTIQUES collection in database
 
@@ -31,8 +32,17 @@ async function removeById(_id) {
   return Antique.deleteOne({ _id });
 }
 
+async function getAllFromCache() {
+  if (cachedAllItems.length > 0) {
+    return cachedAllItems;
+  }
+  return await getAll();
+}
+
 async function getAll() {
-  return Antique.find();
+  const items = await Antique.find();
+  cachedAllItems = items;
+  return items;
 }
 
 async function saveBulk(array) {
@@ -42,5 +52,5 @@ async function saveBulk(array) {
 exports.addItem = addItem;
 exports.findById = findById;
 exports.updateById = updateById;
-exports.getAll = getAll;
+exports.getAll = getAllFromCache;
 exports.saveBulk = saveBulk;

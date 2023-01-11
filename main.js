@@ -22,13 +22,13 @@ const linkList = [
     'https://www.2dehands.be/q/weimar+porselein/#Language:all-languages|postcode:3300'
 ]
 
-function getRandomElementAndRemoveIt(array) {
+function getRandomLinkAndRemoveIt(array) {
   const index = Math.floor(Math.random() * array.length);
   return array.splice(index, 1)[0];
 }
 
 async function scrapRandomLink() {
-    const link = getRandomElementAndRemoveIt(linkList);
+    const link = getRandomLinkAndRemoveIt(linkList);
     return await scrapItems(link);
 }
 
@@ -51,15 +51,15 @@ async function runWebScrapper() {
   process.exit(0);
 }
 
-async function saveItemsInDB(filteredItems) {
-  const mappedItems = filteredItems.map(x => mapBeforeSaving(x))
+async function saveItemsInDB(antiques) {
+  const mappedItems = antiques.map(x => mapBeforeSaving(x))
   await antiqueRepository.saveBulk(mappedItems);
 }
 
 async function filterItems(items) {
   const antiques = await antiqueRepository.getAll();
   const oldIds = antiques.map(item => item._id);
-  return items.filter(item => !oldIds.includes(item.href));
+  return items.filter(item => item.href && !oldIds.includes(item.href));
 }
 
 async function publishItemsInBot(filteredItems) {
