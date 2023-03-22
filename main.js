@@ -13,13 +13,19 @@ const connectionSettings = {
   useUnifiedTopology: true
 };
 
-const linkList = [
+let linkList = [
     'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true',
     'https://www.2dehands.be/q/stokke+varier/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300|searchInTitleAndDescription:true',
     'https://www.2dehands.be/q/kniestoel/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
     'https://www.2dehands.be/q/oude+lamp/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
     'https://www.2dehands.be/q/antieke+luster/#Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|postcode:3300',
-    'https://www.2dehands.be/q/weimar+porselein/#Language:all-languages|postcode:3300'
+    'https://www.2dehands.be/q/weimar+porselein/#Language:all-languages|postcode:3300',
+    'https://www.2dehands.be/q/stokke+move/',
+    'https://www.marktplaats.nl/q/stokke+move/',
+    'https://www.2dehands.be/q/stokke+balans/#Language:all-languages|postcode:1200',
+    'https://www.marktplaats.nl/q/stokke+balans/',
+    'https://www.marktplaats.nl/q/luster/',
+    'https://www.2dehands.be/q/luster/#Language:all-languages',
 ]
 
 function getRandomLinkAndRemoveIt(array) {
@@ -29,6 +35,7 @@ function getRandomLinkAndRemoveIt(array) {
 
 async function scrapRandomLink() {
     const link = getRandomLinkAndRemoveIt(linkList);
+    console.log('scrap link: ', link)
     return await scrapItems(link);
 }
 
@@ -37,6 +44,7 @@ async function collectFresh15Items() {
     while (items.length < 15 && linkList.length > 0) {
         const newItems = await scrapRandomLink();
         const filteredItems = await filterItems(newItems);
+        console.log('new items: ', filteredItems.length)
         items.push(...filteredItems);
     }
     return items.slice(0, 15);
@@ -46,7 +54,9 @@ async function runWebScrapper() {
   console.log('start scrap');
   const items = await collectFresh15Items();
   await publishItemsInBot(items);
+  console.log('items published in bot: ', items.length);
   await saveItemsInDB(items);
+  console.log('items saved in mongodb: ', items.length);
   console.log('finish scrap');
   process.exit(0);
 }
@@ -59,7 +69,12 @@ async function saveItemsInDB(antiques) {
 async function filterItems(items) {
   const antiques = await antiqueRepository.getAll();
   const oldIds = antiques.map(item => item._id);
-  return items.filter(item => item.href && !oldIds.includes(item.href));
+  const filteredItems = (items || []).filter(item => item.href && !oldIds.includes(item.href));
+  const uniqueItems = {};
+  filteredItems.forEach(item => {
+    uniqueItems[item.href] = item;
+  });
+  return Object.values(uniqueItems);
 }
 
 async function publishItemsInBot(filteredItems) {
