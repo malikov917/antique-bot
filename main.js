@@ -40,14 +40,23 @@ async function scrapRandomLink() {
 }
 
 async function collectFresh15Items() {
-    const items = [];
-    while (items.length < 15 && linkList.length > 0) {
-        const newItems = await scrapRandomLink();
-        const filteredItems = await filterItems(newItems);
-        console.log('new items: ', filteredItems.length)
-        items.push(...filteredItems);
-    }
+    const items = await collectFreshItems(15);
     return items.slice(0, 15);
+}
+
+async function collectFreshItems(n) {
+    const items = [];
+    while (items.length < n && linkList.length > 0) {
+        items.push(...await getFreshItems());
+    }
+    return items;
+}
+
+async function getFreshItems() {
+    const newItems = await scrapRandomLink();
+    const filteredItems = await filterItems(newItems);
+    console.log('new items: ', filteredItems.length)
+    return filteredItems;
 }
 
 async function runWebScrapper() {
@@ -67,21 +76,37 @@ async function saveItemsInDB(antiques) {
 }
 
 async function filterItems(items) {
-  const antiques = await antiqueRepository.getAll();
-  const oldIds = antiques.map(item => item._id);
-  const filteredItems = (items || []).filter(item => item.href && !oldIds.includes(item.href));
-  const uniqueItems = {};
-  filteredItems.forEach(item => {
-    uniqueItems[item.href] = item;
-  });
+  const oldIds = await getOldIds();
+  const filteredItems = getFilteredItems(items, oldIds);
+  const uniqueItems = filterUniqueItems(filteredItems);
+  return uniqueItems;
+}
+
+function getFilteredItems(items, oldIds) {
+  return (items || []).filter(item => item.href && !oldIds.includes(item.href));
+}
+
+function filterUniqueItems(items) {
+  const uniqueItems = items.reduce((acc, item) => {
+    acc[item.href] = item;
+    return acc;
+  }, {});
   return Object.values(uniqueItems);
+}
+
+async function getOldIds() {
+  const antiques = await antiqueRepository.getAll();
+  return antiques.map(item => item._id);
 }
 
 async function publishItemsInBot(filteredItems) {
   for (const item of filteredItems) {
-    const titleWithLink = `<a href="${item.href}">${item.title}</a> <b>${item.price}</b>`;
-    await bot.sendHTMLMessage(titleWithLink);
+    await bot.sendHTMLMessage(buildItemMessage(item));
   }
+}
+
+function buildItemMessage(item) {
+  return `<a href="${item.href}">${item.title}</a> <b>${item.price}</b>`;
 }
 
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
