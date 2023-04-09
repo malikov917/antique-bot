@@ -1,17 +1,12 @@
 // dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
 require('dotenv').config();
 const { scrapItems } = require('./scrappers/get-2hand-links');
-const bot = require('./bot/bot');
-const { mapBeforeSaving } = require('./services/utils')
+const { mapBeforeSaving } = require('./services/utils');
+const { connectionSettings } = require('./configs/mongodb-connection-settings');
+const { AntiqueBot } = require('./bot/antique-bot');
+const { NewsBot } = require('./bot/news-bot');
 const mongoose = require('mongoose');
-let antiqueRepository = require('./api/antique-repository');
-const mockAntiqueRepository = require('./api/mock-antique-repository');
-// antiqueRepository = mockAntiqueRepository;
-
-const connectionSettings = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-};
+const antiqueRepository = require('./api/antique-repository');
 
 let linkList = [
     'https://www.2dehands.be/l/antiek-en-kunst/#q:stokke|Language:all-languages|sortBy:SORT_INDEX|sortOrder:DECREASING|searchInTitleAndDescription:true',
@@ -100,6 +95,7 @@ async function getOldIds() {
 }
 
 async function publishItemsInBot(filteredItems) {
+  const bot = new AntiqueBot();
   for (const item of filteredItems) {
     await bot.sendHTMLMessage(buildItemMessage(item));
   }
