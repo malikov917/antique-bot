@@ -1,31 +1,25 @@
 const { Telegraf } = require('telegraf');
 
-const channel = process.env.ANTIQUE_TG_CHANNEL;
-const botToken = process.env.ANTIQUE_TG_BOT_TOKEN;
+const charactersToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
 
-const charactersToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+class Bot {
+  constructor(channel, botToken) {
+    this.bot = new Telegraf(botToken);
+    this.channel = channel;
+  }
 
-// HOW TO USE:
-//
-// await bot.sendMessage(`Bot started scrapping: ${(new Date()).toUTCString()}`);
-// for sending links you can use [Link](example.com) pattern
-
-const sendMessage = (textMessage) => {
-    const bot = new Telegraf(botToken);
+  async sendMessage(textMessage) {
     const escapedMessage = charactersToEscape.reduce((acc, char) => acc.replace(char, `\\${char}`), textMessage);
-    return bot.telegram.sendMessage(channel, escapedMessage, { parse_mode: 'MarkdownV2' });
+    return this.bot.telegram.sendMessage(this.channel, escapedMessage, { parse_mode: 'MarkdownV2' });
+  }
+
+  async sendHTMLMessage(textMessage) {
+    return this.bot.telegram.sendMessage(this.channel, textMessage, { parse_mode: 'HTML' });
+  }
+
+  async sendPhoto(uri, message) {
+    return this.bot.telegram.sendPhoto(this.channel, uri, { caption: message });
+  }
 }
 
-const sendHTMLMessage = (textMessage) => {
-    const bot = new Telegraf(botToken);
-    return bot.telegram.sendMessage(channel, textMessage, { parse_mode: 'HTML' });
-}
-
-const sendPhoto = (uri, message) => {
-    const bot = new Telegraf(botToken);
-    return bot.telegram.sendPhoto(channel, uri, { caption: message });
-}
-
-exports.sendMessage = sendMessage;
-exports.sendPhoto = sendPhoto;
-exports.sendHTMLMessage = sendHTMLMessage;
+exports.Bot = Bot;
