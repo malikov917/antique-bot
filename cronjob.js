@@ -16,9 +16,9 @@ const jobNews = new CronJob('0 9,12,15,17,19,21 * * *', function() {
 }, null, true, 'UTC');
 
 // cronjob for heroku which is in UTC time and executes every 1 minute
-const jobHeroku = new CronJob('* * * * *', function() {
-  foo();
-}, null, true, 'UTC');
+// const jobHeroku = new CronJob('* * * * *', function() {
+//   foo();
+// }, null, true, 'UTC');
 
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
     .then(() => {
