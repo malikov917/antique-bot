@@ -7,5 +7,3 @@ class AntiqueBot extends Bot {
 }
 
 exports.AntiqueBot = AntiqueBot;
-
-const bot = new AntiqueBot();

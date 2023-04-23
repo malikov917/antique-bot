@@ -19,8 +19,12 @@ async function findById(connector, _id) {
   return NewsModel.findOne({ _id });
 }
 
-async function updateById(_id, model) {
-  return NewsModel.findByIdAndUpdate({ _id }, {...model});
+async function getLatestNotPosted() {
+  return NewsModel.findOne({ status: 'NEW' }).sort({ createdAt: 1 });
+}
+
+async function updateById(_id, update) {
+  return NewsModel.findByIdAndUpdate({ _id }, { $set: update }, { new: true, useFindAndModify: false });
 }
 
 async function removeById(_id) {
@@ -58,3 +62,4 @@ exports.findById = findById;
 exports.updateById = updateById;
 exports.getAll = getAllFromCache;
 exports.saveBulk = saveBulk;
+exports.getLatestNotPosted = getLatestNotPosted;
