@@ -1,7 +1,7 @@
 // dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
 require('dotenv').config();
 const { scrapItems } = require('./scrappers/get-2hand-links');
-const { mapBeforeSaving } = require('./services/utils');
+const { mapAntiqueBeforeSaving } = require('./services/utils');
 const { connectionSettings } = require('./configs/mongodb-connection-settings');
 const { AntiqueBot } = require('./bot/antique-bot');
 const { NewsBot } = require('./bot/news-bot');
@@ -66,7 +66,7 @@ async function runWebScrapper() {
 }
 
 async function saveItemsInDB(antiques) {
-  const mappedItems = antiques.map(x => mapBeforeSaving(x))
+  const mappedItems = antiques.map(x => mapAntiqueBeforeSaving(x))
   await antiqueRepository.saveBulk(mappedItems);
 }
 
@@ -75,6 +75,11 @@ async function filterItems(items) {
   const filteredItems = getFilteredItems(items, oldIds);
   const uniqueItems = filterUniqueItems(filteredItems);
   return uniqueItems;
+}
+
+async function getOldIds() {
+  const antiques = await antiqueRepository.getAll();
+  return antiques.map(item => item._id);
 }
 
 function getFilteredItems(items, oldIds) {
@@ -87,11 +92,6 @@ function filterUniqueItems(items) {
     return acc;
   }, {});
   return Object.values(uniqueItems);
-}
-
-async function getOldIds() {
-  const antiques = await antiqueRepository.getAll();
-  return antiques.map(item => item._id);
 }
 
 async function publishItemsInBot(filteredItems) {
