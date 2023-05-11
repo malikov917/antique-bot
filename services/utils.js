@@ -23,6 +23,7 @@ function mapTldrNewsBeforeSaving(rawItem) {
       headline: rawItem.headline,
       description: rawItem.description,
       url: rawItem.url,
+      image: rawItem.image,
       status: 'NEW'
     }
 }
@@ -52,8 +53,18 @@ function buildTldrLink() {
   return `https://tldr.tech/tech/${date}`;
 }
 
+function buildNewsHTMLMessage(item) {
+  return `<b>${item.headline}</b> \n\n${item.description}\n\n<a href="${item.url}">Original article</a>`;
+}
+
+function buildNewsPhotoMessage(item) {
+  return `*${item.headline}* \n\n${item.description} \n\n[Original article](${item.url})`;
+}
+
 exports.getParsedLink = getParsedLink;
 exports.mapAntiqueBeforeSaving = mapAntiqueBeforeSaving;
 exports.mapTldrNewsBeforeSaving = mapTldrNewsBeforeSaving;
 exports.waitMilliseconds = waitMilliseconds;
 exports.buildTldrLink = buildTldrLink;
+exports.buildNewsHTMLMessage = buildNewsHTMLMessage;
+exports.buildNewsPhotoMessage = buildNewsPhotoMessage;
