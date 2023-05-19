@@ -14,8 +14,8 @@ function getItemsFromPage(page) {
     products.forEach((product, index) => {
       const title = product.querySelector('h3.hz-Listing-title')?.innerText;
       const price = product.querySelector('.hz-Listing-price')?.innerText;
-      const href = product.querySelector('a')?.href;
-      items.push({ orderOnPage: index, title, price, href });
+      const url = product.querySelector('a')?.href;
+      items.push({ orderOnPage: index, title, price, url });
     });
     return items;
   });
@@ -24,7 +24,7 @@ function getItemsFromPage(page) {
 function filterReverseAndMapItems(items) {
   return items
       .filter(x => x)
-      .map(item => ({ ...item, href: getParsedLink(item.href) }));
+      .map(item => ({ ...item, url: getParsedLink(item.url) }));
 }
 
 const scrapItems = async (url) => {

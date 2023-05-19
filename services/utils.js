@@ -9,11 +9,12 @@ function getParsedLink(rawLink) {
 
 function mapAntiqueBeforeSaving(rawItem) {
     return {
-      _id: rawItem.href,
+      _id: createUniqueIdFromLink(rawItem.url),
       title: rawItem.title,
       description: '',
+      url: rawItem.url,
       price: rawItem.price,
-      status: 'POSTED'
+      status: 'POSTED',
     }
 }
 

@@ -15,6 +15,7 @@ async function addItem(item) {
     _id: item._id,
     title: item.title,
     description: item.description,
+    url: item.url,
     price: item.price,
     status: item.status || 'NEW'
   }).save();
@@ -46,7 +47,25 @@ async function getAll() {
 }
 
 async function saveBulk(array) {
-  return Antique.insertMany(array);
+  const upsertOps = array.map(newsItem => {
+    return {
+      updateOne: {
+        filter: { _id: newsItem._id },
+        update: { $set: { ...newsItem } },
+        upsert: true
+      }
+    };
+  });
+  return await Antique.bulkWrite(upsertOps);
+}
+
+async function updateOne(doc, hash) {
+  return Antique.updateOne(
+      { _id: doc._id },
+      {
+        $set: { url: doc._id, _id: hash }
+      }
+  );
 }
 
 exports.addItem = addItem;
@@ -54,3 +73,4 @@ exports.findById = findById;
 exports.updateById = updateById;
 exports.getAll = getAllFromCache;
 exports.saveBulk = saveBulk;
+exports.updateOne = updateOne;

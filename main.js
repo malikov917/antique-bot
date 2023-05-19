@@ -25,7 +25,8 @@ let linkList = [
 
 function getRandomLinkAndRemoveIt(array) {
   const index = Math.floor(Math.random() * array.length);
-  return array.splice(index, 1)[0];
+  const removedItem = array.splice(index, 1);
+  return removedItem[0];
 }
 
 async function scrapRandomLink() {
@@ -71,24 +72,13 @@ async function saveItemsInDB(antiques) {
 }
 
 async function filterItems(items) {
-  const oldIds = await getOldIds();
-  const filteredItems = getFilteredItems(items, oldIds);
-  const uniqueItems = filterUniqueItems(filteredItems);
+  const uniqueItems = filterUniqueItems(items);
   return uniqueItems;
-}
-
-async function getOldIds() {
-  const antiques = await antiqueRepository.getAll();
-  return antiques.map(item => item._id);
-}
-
-function getFilteredItems(items, oldIds) {
-  return (items || []).filter(item => item.href && !oldIds.includes(item.href));
 }
 
 function filterUniqueItems(items) {
   const uniqueItems = items.reduce((acc, item) => {
-    acc[item.href] = item;
+    acc[item.url] = item;
     return acc;
   }, {});
   return Object.values(uniqueItems);
@@ -102,7 +92,7 @@ async function publishItemsInBot(filteredItems) {
 }
 
 function buildItemMessage(item) {
-  return `<a href="${item.href}">${item.title}</a> <b>${item.price}</b>`;
+  return `<a href="${item.url}">${item.title}</a> <b>${item.price}</b>`;
 }
 
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)

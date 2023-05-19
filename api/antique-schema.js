@@ -6,6 +6,7 @@ const antiques = new mongoose.Schema({
   },
   title: { type: String },
   description: { type: String },
+  url: { type: String, required: true },
   price: { type: String },
   status: { type: String, enum: ['POSTED', 'NEW'], default: 'NEW' }
 }, { timestamps: true });
