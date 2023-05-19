@@ -1,12 +1,10 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const { mapTldrNewsBeforeSaving, buildTldrLink } = require('./services/utils')
+const { mapTldrNewsBeforeSaving } = require('./services/utils')
 const { connectionSettings } = require('./configs/mongodb-connection-settings');
 const newsRepository = require('./api/tldr-news-repository');
 const NewsScraperClass = require("./scrappers/tldr-news");
-const ShortReadServiceClass = require("./services/short-read/short-read.service");
-const newsScraper = new NewsScraperClass();
-const shortReadService = new ShortReadServiceClass();
+const newsScraper = new NewsScraperClass(process.argv[2]);
 
 async function runWebScrapper() {
   try {
@@ -22,14 +20,14 @@ async function runWebScrapper() {
 }
 
 async function collectNews() {
-  const link = buildTldrLink();
-  let news = await scrapLink(link);
+  const link = newsScraper.buildTldrLink();
+  const news = await scrapLink(link);
   console.log('[tldr] items collected: ', news.length);
   return news;
 }
 
 async function scrapLink(link) {
-  console.log('[tldr] scrap link: ', link)
+  console.log('[tldr] scrap link: ', link);
   return await newsScraper.scrape(link);
 }
 

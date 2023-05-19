@@ -2,10 +2,12 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const { puppeteerOptions } = require('../configs/puppeteer-options');
 const PageScraper = require('./page-scraper');
+const { buildTldrLink } = require('../services/utils')
 
 class NewsScraper extends PageScraper {
-  constructor() {
+  constructor(newsType) {
     super(puppeteer, cheerio, puppeteerOptions);
+    this.newsType = newsType || 'tech'; // possible values: tech, ai, crypto
   }
 
   async scrape(url) {
@@ -53,7 +55,8 @@ class NewsScraper extends PageScraper {
   async scrapeNews(page) {
     const pageHtml = await page.content();
     const $ = cheerio.load(pageHtml);
-    const res = $('h6:contains("Big Tech & Startups")');
+    const h6 = this.newsType === 'tech' ? 'Big Tech & Startups' : 'Headlines & Launches';
+    const res = $(`h6:contains(${h6})`);
     const newsBlock = res.parent().parent();
     const newsEls = newsBlock.find('div:not(.text-center.text-3xl.mt-3) > div.mt-3');
 
@@ -86,6 +89,10 @@ class NewsScraper extends PageScraper {
       console.error(`Error getting image from page: ${error}`);
       throw error;
     }
+  }
+
+  buildTldrLink() {
+    return buildTldrLink(this.newsType);
   }
 }
 

@@ -48,9 +48,9 @@ function getDate() {
   return `${year}-${month}-${day}`;
 }
 
-function buildTldrLink() {
+function buildTldrLink(newsType) {
   const date = getDate();
-  return `https://tldr.tech/tech/${date}`;
+  return `https://tldr.tech/${newsType}/${date}`;
 }
 
 function buildNewsHTMLMessage(item) {

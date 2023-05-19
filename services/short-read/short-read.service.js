@@ -1,6 +1,6 @@
 const { NewsBot } = require('../../bot/news-bot');
 const { getLatestNotPosted, updateById } = require('../../api/tldr-news-repository');
-const { buildNewsPhotoMessage, buildNewsHTMLMessage} = require("../utils");
+const { buildNewsHTMLMessage } = require("../utils");
 
 class ShortReadService {
   constructor() {
@@ -10,7 +10,7 @@ class ShortReadService {
     const news = await this.getLatestNotPosted();
     if (!news) return;
     if (news.image) {
-      await this.newsBot.sendPhoto(news.image, buildNewsPhotoMessage(news));
+      await this.newsBot.sendPhoto(news.image, buildNewsHTMLMessage(news));
     } else {
       await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
     }

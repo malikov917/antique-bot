@@ -19,8 +19,7 @@ class Bot {
   }
 
   async sendPhoto(uri, message) {
-    const escapedMessage = charactersToEscape.reduce((acc, char) => acc.replaceAll(char, `\\${char}`), message);
-    return this.bot.telegram.sendPhoto(this.channel, uri, { caption: escapedMessage, parse_mode: 'MarkdownV2' });
+    return this.bot.telegram.sendPhoto(this.channel, uri, { caption: message, parse_mode: 'HTML' });
   }
 }
 
