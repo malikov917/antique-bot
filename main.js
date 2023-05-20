@@ -1,7 +1,7 @@
 // dotenv config string (as doc says: 'As early as possible in your application, import and configure dotenv')
 require('dotenv').config();
 const { scrapItems } = require('./scrappers/get-2hand-links');
-const { mapAntiqueBeforeSaving } = require('./services/utils');
+const { mapAntiqueBeforeSaving, createUniqueIdFromLink } = require('./services/utils');
 const { connectionSettings } = require('./configs/mongodb-connection-settings');
 const { AntiqueBot } = require('./bot/antique-bot');
 const { NewsBot } = require('./bot/news-bot');
@@ -31,7 +31,7 @@ function getRandomLinkAndRemoveIt(array) {
 
 async function scrapRandomLink() {
     const link = getRandomLinkAndRemoveIt(linkList);
-    console.log('scrap link: ', link)
+    console.log('[antique] scrap link: ', link)
     return await scrapItems(link);
 }
 
@@ -51,24 +51,35 @@ async function collectFreshItems(n) {
 async function getFreshItems() {
     const newItems = await scrapRandomLink();
     const filteredItems = await filterItems(newItems);
-    console.log('new items: ', filteredItems.length)
-    return filteredItems;
+    const itemsWithGeneratedIds = generateIdsForItems(filteredItems);
+    return itemsWithGeneratedIds;
+}
+
+function generateIdsForItems(items) {
+  return items.map(x => {
+    x._id = createUniqueIdFromLink(x.url);
+    return x;
+  });
+}
+
+function filterFreshItems(items, upserted) {
+  return items.filter(x => upserted.result.upserted.map(x => x._id).includes(x._id));
 }
 
 async function runWebScrapper() {
-  console.log('start scrap');
+  console.log('[antique] start scrap');
   const items = await collectFresh15Items();
-  await publishItemsInBot(items);
-  console.log('items published in bot: ', items.length);
-  await saveItemsInDB(items);
-  console.log('items saved in mongodb: ', items.length);
-  console.log('finish scrap');
+  const upserted = await saveItemsInDB(items);
+  const filteredItems = filterFreshItems(items, upserted);
+  console.log('[antique] saved new items in db', filteredItems.length);
+  await publishItemsInBot(filteredItems);
+  console.log('[antique] finish scrap');
   process.exit(0);
 }
 
 async function saveItemsInDB(antiques) {
   const mappedItems = antiques.map(x => mapAntiqueBeforeSaving(x))
-  await antiqueRepository.saveBulk(mappedItems);
+  return await antiqueRepository.saveBulk(mappedItems);
 }
 
 async function filterItems(items) {
@@ -84,11 +95,12 @@ function filterUniqueItems(items) {
   return Object.values(uniqueItems);
 }
 
-async function publishItemsInBot(filteredItems) {
+async function publishItemsInBot(items) {
   const bot = new AntiqueBot();
-  for (const item of filteredItems) {
+  for (const item of items) {
     await bot.sendHTMLMessage(buildItemMessage(item));
   }
+  console.log('[antique] publish items in bot', items.length);
 }
 
 function buildItemMessage(item) {

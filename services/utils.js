@@ -69,3 +69,4 @@ exports.waitMilliseconds = waitMilliseconds;
 exports.buildTldrLink = buildTldrLink;
 exports.buildNewsHTMLMessage = buildNewsHTMLMessage;
 exports.buildNewsPhotoMessage = buildNewsPhotoMessage;
+exports.createUniqueIdFromLink = createUniqueIdFromLink;
