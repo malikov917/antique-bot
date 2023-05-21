@@ -55,11 +55,11 @@ function buildTldrLink(newsType) {
 }
 
 function buildNewsHTMLMessage(item) {
-  return `<b>${item.headline}</b> \n\n${item.description}\n\n<a href="${item.url}">Original article</a>`;
+  return `<b>${item.headline}</b> \n\n${item.description}\n\n<a href="${item.url}">К статье</a>`;
 }
 
 function buildNewsPhotoMessage(item) {
-  return `*${item.headline}* \n\n${item.description} \n\n[Original article](${item.url})`;
+  return `*${item.headline}* \n\n${item.description} \n\n[К статье](${item.url})`;
 }
 
 exports.getParsedLink = getParsedLink;

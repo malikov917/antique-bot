@@ -4,7 +4,6 @@ const { scrapItems } = require('./scrappers/get-2hand-links');
 const { mapAntiqueBeforeSaving, createUniqueIdFromLink } = require('./services/utils');
 const { connectionSettings } = require('./configs/mongodb-connection-settings');
 const { AntiqueBot } = require('./bot/antique-bot');
-const { NewsBot } = require('./bot/news-bot');
 const mongoose = require('mongoose');
 const antiqueRepository = require('./api/antique-repository');
 

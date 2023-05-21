@@ -1,7 +1,7 @@
+require('dotenv').config();
 const ShortReadService = require("./services/short-read/short-read.service");
 const mongoose = require("mongoose");
 const {connectionSettings} = require("./configs/mongodb-connection-settings");
-require('dotenv').config();
 const CronJob = require('cron').CronJob;
 const shortReadService = new ShortReadService();
 const axios = require('axios');
