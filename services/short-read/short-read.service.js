@@ -22,7 +22,7 @@ class ShortReadService {
     const { headline, description } = news._doc;
     const translatedSummary = await this.summarizerTranslator.summarizeAndTranslate(headline, description);
 
-    // news.headline = translatedSummary.headline;
+    news.headline = translatedSummary.headline;
     news.description = translatedSummary.description;
   }
 
