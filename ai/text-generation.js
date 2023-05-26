@@ -36,7 +36,10 @@ class OpenAISummarizerTranslator {
         prompt: prompt,
         max_tokens: 1000,
         n: 1,
-        temperature: 2
+        temperature: 1,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
       });
 
       pureJsonString = this.trimRedundant(response);

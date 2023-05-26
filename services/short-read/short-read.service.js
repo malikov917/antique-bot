@@ -13,9 +13,13 @@ class ShortReadService {
     const news = await this.getLatestNotPosted();
     if (!news) return;
 
+    console.log('[tldr] posting news: ', news.headline)
     await this.translate(news);
+    console.log('[tldr] translated news: ', news.headline)
     await this.sendNews(news);
+    console.log('[tldr] sent news: ', news.headline)
     await this.setAsPosted(news._id);
+    console.log('[tldr] saved news: ', news.headline)
   }
 
   async translate(news) {
