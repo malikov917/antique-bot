@@ -32,7 +32,12 @@ class ShortReadService {
 
   async sendNews(news) {
     if (news.image) {
-      await this.newsBot.sendPhoto(news.image, buildNewsHTMLMessage(news));
+      try {
+        await this.newsBot.sendPhoto(news.image, buildNewsHTMLMessage(news));
+      } catch (e) {
+        await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
+      }
+
     } else {
       await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
     }

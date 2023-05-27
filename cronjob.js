@@ -28,9 +28,10 @@ const keepAwakeJob = new CronJob('0,20,40 * * * *', async function () {
 }, null, true, 'UTC');
 
 mongoose.connect(process.env.ANTIQUE_DB_STRING, connectionSettings)
-    .then(() => {
+    .then(async () => {
       jobNews.start();
       keepAwakeJob.start()
+      // await shortReadService.postLatestNews();
       console.log('[cron] job started at: ', new Date().getHours(), new Date().getMinutes());
     })
     .catch(errors => console.error(errors));

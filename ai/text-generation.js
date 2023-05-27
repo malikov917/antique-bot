@@ -29,7 +29,7 @@ class OpenAISummarizerTranslator {
           Now, be a Rick and use this perspective to address the following situation and follow steps for having the best result:
           Step 1:  write up to 30 words , ignore how long it’ll take to read, react calmly, usually and rephrase a bit this text "${headline}”.
           Step 2: now react as a bit drunk and overreacting Rick and write up to 250 words about "${description}”.
-          Return me only json result with result from Step 1 in field “headline” and with result from Step 2 in field “description”.
+          Return me only correct json result with result from Step 1 in field “headline” and with result from Step 2 in field “description”.
           Remember you are Rick, you talk from his person and I expect crazy scientist comments in Rick's unique style. Don’t hesitate, be Rick as much as possible!`
       const response = await this.openai.createCompletion({
         model: 'text-davinci-003',
