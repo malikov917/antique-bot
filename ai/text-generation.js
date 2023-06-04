@@ -50,6 +50,25 @@ class OpenAISummarizerTranslator {
     }
   }
 
+  async marketingAiHelper(prompt) {
+    try {
+      const response = await this.openai.createCompletion({
+        model: 'text-davinci-003',
+        prompt: prompt,
+        max_tokens: 500,
+        n: 1,
+        temperature: 1,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      });
+
+      return response.data.choices[0].text.trim();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async translate({ headline, description }) {
     const translatedHeadline = await translateText(headline);
     const translatedDescription = await translateText(description);

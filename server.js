@@ -1,13 +1,18 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
+const bodyParser = require('body-parser');
 const { join } = require('path');
+const OpenAISummarizerTranslator = require("./ai/text-generation");
 
 const app = express();
-app.set("port", process.env.PORT || 5000);
+app.set("port", process.env.PORT || 2000);
 
 const uiLinks = `<a href="/">HOME</a>
                 <a href="/check-puppeteer">check puppeteer</a>
                 <a href="/test">test</a>`;
+
+app.use(bodyParser.json());
+app.use(express.static(join(__dirname, 'marketing-ai-helper')));
 
 app.get("/", (req, res) => {
     res.send(`
@@ -27,6 +32,11 @@ app.get("/test", (req, res) => {
         <p>You are on the TEST page. Right now its ${Date()}</p>
         ${uiLinks}
     `);
+});
+
+app.get("/marketing-ai-helper", (req, res) => {
+    const filePath = join(__dirname, './marketing-ai-helper/index.html');
+    res.sendFile(filePath);
 });
 
 app.get("/check-puppeteer", (req, res) => {
@@ -49,6 +59,21 @@ app.get("/check-puppeteer", (req, res) => {
         .catch(err => res.sendStatus(500))
         .finally(() => page.close())
     ;
+});
+
+app.post('/ai/completion', async (req, res) => {
+    try {
+        const { prompt } = req.body;
+
+        const openaiApi = new OpenAISummarizerTranslator();
+
+        const completion = await openaiApi.marketingAiHelper(prompt);
+
+        res.json({ completion });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
 });
 
 app.listen(app.get("port"), () =>

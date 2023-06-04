@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3 Column Grid Layout</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<div class="grid-container">
+  <div class="grid-item">
+    <h2>Get Started</h2>
+    <p>Provide a description of your post, put your expectations here.</p>
+    <textarea id="prompt-text" rows="4" placeholder="Enter prompt text..."></textarea>
+  </div>
+  <div class="grid-item">
+    <h2>Post style example</h2>
+    <p>Optionally provide an example of a post which you like</p>
+    <textarea id="post-example-text" rows="4" placeholder="Enter post example..."></textarea>
+  </div>
+  <div class="grid-item">
+    <h2>In style of LinkedIn</h2>
+    <button id="generate-for-linkedin">Generate for:</button>
+    <textarea disabled id="linkedin-result" rows="4" placeholder="Enter style 1..."></textarea>
+    <button id="generate-for-twitter">Generate for:</button>
+    <h2>In style of Twitter</h2>
+    <textarea disabled id="twitter-result" rows="4" placeholder="Enter style 2..."></textarea>
+    <button id="generate-for-intranet">Generate for:</button>
+    <h2>In style of Intranet</h2>
+    <textarea disabled id="intranet-result" rows="4" placeholder="Enter style 3..."></textarea>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
