@@ -5,9 +5,10 @@ const { join } = require('path');
 const OpenAISummarizerTranslator = require("./ai/text-generation");
 
 const app = express();
-app.set("port", process.env.PORT || 2000);
+app.set("port", process.env.PORT || 5000);
 
 const uiLinks = `<a href="/">HOME</a>
+                <a href="/marketing-ai-helper">Marketing AI Helper</a>
                 <a href="/check-puppeteer">check puppeteer</a>
                 <a href="/test">test</a>`;
 
