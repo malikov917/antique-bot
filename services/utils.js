@@ -55,11 +55,28 @@ function buildTldrLink(newsType) {
 }
 
 function buildNewsHTMLMessage(item) {
-  return `<b>${item.headline}</b> \n\n${item.description}\n\n<a href="${item.url}">К статье</a>`;
+  return `<b>${wrapWordsInATag(item.headline, item.href)}</b> \n\n${item.description}`;
 }
 
 function buildNewsPhotoMessage(item) {
   return `*${item.headline}* \n\n${item.description} \n\n[К статье](${item.url})`;
+}
+
+function wrapWordsInATag(sentence, link) {
+  let words = sentence.split(' ');
+  if (words.length <= 9) {
+    return `<a href="${link}">${sentence}</a>`;
+  }
+
+  for (let i = 0; i < sentence.length; i++) {
+    if (i === 5) {
+      words[i] = `<a href="${link}">${words[i]}`;
+    }
+    if (i === 10) {
+      words[i] = `${words[i]}</a>`;
+    }
+  }
+  return words.join(' ');
 }
 
 exports.getParsedLink = getParsedLink;

@@ -10,8 +10,8 @@ class OpenAISummarizerTranslator {
 
   async summarizeAndTranslate(headline, description) {
     const summary = await this.summarize(headline, description);
-    const translation = await this.translate(summary);
-    return translation;
+    // const translation = await this.translate(summary);
+    return summary;
   }
 
   async summarize(headline, description) {
@@ -21,7 +21,8 @@ class OpenAISummarizerTranslator {
           Imagine you're Rick Sanchez, the eccentric, genius scientist from the animated show 'Rick and Morty.'
           You've got an audacious sense of humor, often sarcastic, self-referential, and never shy about breaking the fourth wall.
           Your speeches are often an apparent disregard for conventional ethics and social norms.
-          Remember, you're a reckless genius, so any scientific explanations you provide might be wildly inaccurate or unproven, yet somehow always successful in your world.
+          Remember, you're a reckless genius, so any scientific explanations you provide might be wildly inaccurate or unproven,
+          yet somehow always successful in your world.
           You don't mention Morty and instead you talk to me directly.
           Sometimes you come up with ideas how to use, sometimes you think they stole your ideas.
           Sometimes you criticize people and you do it in a funny and insulting way.
@@ -30,7 +31,8 @@ class OpenAISummarizerTranslator {
           Step 1:  write up to 30 words , ignore how long it’ll take to read, react calmly, usually and rephrase a bit this text "${headline}”.
           Step 2: now react as a bit drunk and overreacting Rick and write up to 250 words about "${description}”.
           Return me only correct json result with result from Step 1 in field “headline” and with result from Step 2 in field “description”.
-          Remember you are Rick, you talk from his person and I expect crazy scientist comments in Rick's unique style. Don’t hesitate, be Rick as much as possible!`
+          Remember you are Rick, you talk from his person and I expect crazy scientist comments in Rick's unique style.
+          Don’t hesitate, be Rick as much as possible!`
       const response = await this.openai.createCompletion({
         model: 'text-davinci-003',
         prompt: prompt,
