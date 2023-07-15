@@ -1,20 +1,18 @@
 require('dotenv').config({ path: '../.env' });
 const { Configuration, OpenAIApi } = require("openai");
-const { translateText } = require("../services/translation/translation-api");
 
-class OpenAISummarizerTranslator {
+class OpenAISummarizer {
   constructor() {
     const configuration = new Configuration({ apiKey: process.env.OPENAI_API_KEY });
     this.openai = new OpenAIApi(configuration);
   }
 
-  async summarizeAndTranslate(headline, description) {
-    const summary = await this.summarize(headline, description);
-    // const translation = await this.translate(summary);
+  async summarize(headline, description) {
+    const summary = await this.summarizeAsRick(headline, description);
     return summary;
   }
 
-  async summarize(headline, description) {
+  async summarizeAsRick(headline, description) {
     let pureJsonString;
     try {
       const prompt = `
@@ -71,12 +69,6 @@ class OpenAISummarizerTranslator {
     }
   }
 
-  async translate({ headline, description }) {
-    const translatedHeadline = await translateText(headline);
-    const translatedDescription = await translateText(description);
-    return { headline: translatedHeadline, description: translatedDescription };
-  }
-
   trimRedundant(response) {
     const unprocessedResult = response.data.choices[0].text.trim();
     const startIndex = unprocessedResult.indexOf('{');
@@ -85,4 +77,4 @@ class OpenAISummarizerTranslator {
   }
 }
 
-module.exports = OpenAISummarizerTranslator;
+module.exports = OpenAISummarizer;

@@ -8,13 +8,13 @@ const axios = require('axios');
 const HEROKU_APP_URL = 'https://antique-node-bot.herokuapp.com/';
 
 
-async function foo() {
+async function postLatestNews() {
   await shortReadService.postLatestNews();
 }
 
 const jobNews = new CronJob('0 9,12,15,17,19,21 * * *', function() {
   console.log('[cron] job post run: ', new Date().getHours(), new Date().getMinutes());
-  foo();
+  postLatestNews();
 }, null, true, 'UTC');
 
 const keepAwakeJob = new CronJob('0,20,40 * * * *', async function () {

@@ -11,25 +11,27 @@ const shortReadService = new ShortReadServiceClass();
 const {translateText} = require("./services/translation/translation-api");
 
 
-async function sendToTelegram() {
-  const newsBot = new NewsBot();
-  const news = {
-    content: '<b>Приготовься, Windows скоро станет умнее!</b> \n' +
-        '\n' +
-        'Ах, наконец-то мир немного разгадывает свои тайны! Теперь, с появлением умных плагинов-копилотов, системы искусственного интеллекта могут запускать инструменты и взаимодействовать с цифровыми системами, и все это на твоем рабочем столе Windows! Поговорим о высокотехнологичной эффективности! Это может стать началом веселья следующего уровня. Только убедись, что ты не слишком увлекся; я уверен, что мои внуки в какой-то момент скажут мне за это спасибо. В любом случае, будет интересно посмотреть, какое будущее ждет персональные компьютеры!\n' +
-        '\n' +
-        '<a href="https://blogs.windows.com/windowsdeveloper/2023/05/23/bringing-the-power-of-ai-to-windows-11-unlocking-a-new-era-of-productivity-for-customers-and-developers-with-windows-copilot-and-dev-home/?utm_source=tldrai">К статье</a>',
-    image: 'https://blogs.windows.com/wp-content/uploads/prod/sites/3/2023/05/Windows-Dev-Blog_Windows-Copilot.png'
-  }
-  try {
-    await newsBot.sendPhoto(news.image, news.content);
-  } catch (e) {
-    await newsBot.sendMessage(news.content);
+async function sendToTelegram(news) {
+  this.newsBot = new NewsBot();
+  if (news.image) {
+    try {
+      await this.newsBot.sendPhoto(news.image, buildNewsHTMLMessage(news));
+    } catch (e) {
+      await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
+    }
+  } else {
+    await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
   }
 }
 
 try {
-  sendToTelegram();
+  let news = {
+    headline: 'test headline',
+    description: 'test description',
+    image: 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+    href: 'https://www.google.com'
+  }
+  sendToTelegram(news);
 } catch (e) {
   console.log(e);
 }

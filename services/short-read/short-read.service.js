@@ -1,12 +1,12 @@
 const { NewsBot } = require('../../bot/news-bot');
 const { getLatestNotPosted, updateById } = require('../../api/tldr-news-repository');
 const { buildNewsHTMLMessage } = require("../utils");
-const OpenAISummarizerTranslator = require("../../ai/text-generation");
+const OpenAISummarizer = require("../../ai/text-generation");
 
 class ShortReadService {
   constructor() {
     this.newsBot = new NewsBot();
-    this.summarizerTranslator = new OpenAISummarizerTranslator();
+    this.summarizer = new OpenAISummarizer();
   }
 
   async postLatestNews() {
@@ -14,7 +14,7 @@ class ShortReadService {
     if (!news) return;
 
     console.log('[tldr] posting news: ', news.headline)
-    await this.translate(news);
+    await this.summarize(news);
     console.log('[tldr] translated news: ', news.headline)
     await this.sendNews(news);
     console.log('[tldr] sent news: ', news.headline)
@@ -22,9 +22,9 @@ class ShortReadService {
     console.log('[tldr] saved news: ', news.headline)
   }
 
-  async translate(news) {
+  async summarize(news) {
     const { headline, description } = news._doc;
-    const translatedSummary = await this.summarizerTranslator.summarizeAndTranslate(headline, description);
+    const translatedSummary = await this.summarizer.summarize(headline, description);
 
     news.headline = translatedSummary.headline;
     news.description = translatedSummary.description;
@@ -37,7 +37,6 @@ class ShortReadService {
       } catch (e) {
         await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
       }
-
     } else {
       await this.newsBot.sendHTMLMessage(buildNewsHTMLMessage(news));
     }

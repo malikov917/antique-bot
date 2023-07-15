@@ -55,11 +55,7 @@ function buildTldrLink(newsType) {
 }
 
 function buildNewsHTMLMessage(item) {
-  return `<b>${wrapWordsInATag(item.headline, item.href)}</b> \n\n${item.description}`;
-}
-
-function buildNewsPhotoMessage(item) {
-  return `*${item.headline}* \n\n${item.description} \n\n[К статье](${item.url})`;
+  return `<b>${wrapWordsInATag(item.headline, item.url)}</b> \n\n${item.description}`;
 }
 
 function wrapWordsInATag(sentence, link) {
@@ -85,5 +81,4 @@ exports.mapTldrNewsBeforeSaving = mapTldrNewsBeforeSaving;
 exports.waitMilliseconds = waitMilliseconds;
 exports.buildTldrLink = buildTldrLink;
 exports.buildNewsHTMLMessage = buildNewsHTMLMessage;
-exports.buildNewsPhotoMessage = buildNewsPhotoMessage;
 exports.createUniqueIdFromLink = createUniqueIdFromLink;

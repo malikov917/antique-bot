@@ -2,7 +2,7 @@ const express = require("express");
 const puppeteer = require("puppeteer");
 const bodyParser = require('body-parser');
 const { join } = require('path');
-const OpenAISummarizerTranslator = require("./ai/text-generation");
+const OpenAISummarizer = require("./ai/text-generation");
 
 const app = express();
 app.set("port", process.env.PORT || 5000);
@@ -66,7 +66,7 @@ app.post('/ai/completion', async (req, res) => {
     try {
         const { prompt } = req.body;
 
-        const openaiApi = new OpenAISummarizerTranslator();
+        const openaiApi = new OpenAISummarizer();
 
         const completion = await openaiApi.marketingAiHelper(prompt);
 
