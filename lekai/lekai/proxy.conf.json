@@ -1,0 +1,12 @@
+{
+  "/ai": {
+    "target": "http://localhost:3456",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/api": {
+    "target": "http://localhost:3456",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

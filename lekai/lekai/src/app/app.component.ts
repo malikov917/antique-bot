@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { BuilderModule } from '@builder.io/angular';
 import { FormsModule } from '@angular/forms';
+import { AiService } from '../ai-service/ai.service';
 
 enum KnowledgeLevels {
   A1 = 'A1',
@@ -42,6 +43,7 @@ enum ExerciseTypes {
   WORD_ORDER = 'Word order'*/
 }
 
+
 // function which takes enum and returns array of enum values with keys, values and labels
 function enumToIdValueArray(enumObject: any) {
   return Object.keys(enumObject).map(key => ({
@@ -67,6 +69,7 @@ function enumToIdValueArray(enumObject: any) {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
+  aiService = inject(AiService);
   knowledgeLevels = KnowledgeLevels;
   languages = Languages;
   favoriteTopics = enumToIdValueArray(FavoriteTopics);
@@ -98,16 +101,20 @@ export class AppComponent {
   }
 
   onSubmit(): void {
-    const favoriteTopics = this.form.favoriteTopics.filter((topic: any) => topic.selected)
+    const favoriteTopics = this.form.favoriteTopics
+      .filter((topic: any) => topic.selected)
       .map((topic: any) => topic.value);
     const exerciseType = this.form.exerciseType;
     const language = this.state().selectedLanguage;
     const knowledgeLevel = this.state().selectedKnowledgeLevel;
-    console.log({
+
+    this.aiService.generateTest({
       favoriteTopics,
       exerciseType,
       language,
       knowledgeLevel
-    })
+    }).subscribe((result: any) => {
+      console.log(result, 'result');
+    });
   }
 }

@@ -13,6 +13,7 @@ const uiLinks = `<a href="/">HOME</a>
                 <a href="/test">test</a>`;
 
 app.use(bodyParser.json());
+app.use(express.static(join(__dirname, 'lekai/lekai/dist/lekai')));
 app.use(express.static(join(__dirname, 'marketing-ai-helper')));
 
 app.get("/", (req, res) => {
@@ -37,6 +38,11 @@ app.get("/test", (req, res) => {
 
 app.get("/marketing-ai-helper", (req, res) => {
     const filePath = join(__dirname, './marketing-ai-helper/index.html');
+    res.sendFile(filePath);
+});
+
+app.get("/lekai", (req, res) => {
+    const filePath = join(__dirname, './lekai/lekai/dist/lekai/index.html');
     res.sendFile(filePath);
 });
 
@@ -71,6 +77,17 @@ app.post('/ai/completion', async (req, res) => {
         const completion = await openaiApi.marketingAiHelper(prompt);
 
         res.json({ completion });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+});
+
+app.post('/ai/generate-exercise', async (req, res) => {
+    try {
+        const { prompt } = req.body;
+
+        res.json({ completion: 'yo' });
     } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ error: 'Something went wrong' });
