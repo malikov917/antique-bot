@@ -4,7 +4,30 @@ import { BuilderModule } from '@builder.io/angular';
 import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai-service/ai.service';
 
-const exampleExercise = [
+interface Exercise {
+  sentence: string;
+  options: string[];
+  answer: string;
+  isRevealed: boolean;
+}
+
+// generate interface from:
+// selectedLanguage: Languages.EN,
+// selectedKnowledgeLevel: KnowledgeLevels.A2,
+// exercise: exampleExercise,
+// isLoading: false,
+// initialLoad: true,
+// testDescription: 'A1, English'
+interface AppStateModel {
+  selectedLanguage: Languages,
+  selectedKnowledgeLevel: KnowledgeLevels,
+  exercise: Exercise[],
+  isLoading: boolean,
+  initialLoad: boolean
+  testDescription: string
+}
+
+const exampleExercise: Exercise[] = [
   {
     "sentence": "I love to _________ pizza on the weekends.",
     "options": [
@@ -12,7 +35,8 @@ const exampleExercise = [
       "ate",
       "eating"
     ],
-    "answer": "eat"
+    "answer": "eat",
+    "isRevealed": false
   },
   {
     "sentence": "My favorite dessert is __________.",
@@ -21,7 +45,8 @@ const exampleExercise = [
       "caked",
       "cakes"
     ],
-    "answer": "cake"
+    "answer": "cake",
+    "isRevealed": false
   },
   {
     "sentence": "I usually ____________ salad for lunch.",
@@ -30,7 +55,8 @@ const exampleExercise = [
       "had",
       "having"
     ],
-    "answer": "have"
+    "answer": "have",
+    "isRevealed": false
   },
   {
     "sentence": "I don't like ___________ seafood.",
@@ -39,7 +65,8 @@ const exampleExercise = [
       "ate",
       "eating"
     ],
-    "answer": "eating"
+    "answer": "eating",
+    "isRevealed": false
   },
   {
     "sentence": "My mom likes to ___________ homemade pasta.",
@@ -48,7 +75,8 @@ const exampleExercise = [
       "made",
       "making"
     ],
-    "answer": "make"
+    "answer": "make",
+    "isRevealed": false
   }
 ]
 
@@ -129,7 +157,7 @@ export class AppComponent {
     exerciseType: this.exerciseTypes[0].id,
   }
 
-  state = signal({
+  state = signal<AppStateModel>({
     selectedLanguage: Languages.EN,
     selectedKnowledgeLevel: KnowledgeLevels.A2,
     exercise: exampleExercise,
@@ -169,6 +197,9 @@ export class AppComponent {
       language,
       knowledgeLevel
     }).subscribe((result: any) => {
+      result.completion.exercises.forEach((exercise: any) => {
+        exercise.isRevealed = false;
+      })
       this.state.update((state: any) => ({
         ...state,
         exercise: result.completion.exercises,
@@ -179,6 +210,15 @@ export class AppComponent {
   }
 
   checkTest(): void {
-
+    this.state.update((state: any) => {
+      const exercise = state.exercise;
+      exercise.forEach((exercise: any) => {
+        exercise.isRevealed = true;
+      })
+      return {
+        ...state,
+        exercise
+      }
+    });
   }
 }
