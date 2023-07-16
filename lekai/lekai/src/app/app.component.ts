@@ -4,6 +4,54 @@ import { BuilderModule } from '@builder.io/angular';
 import { FormsModule } from '@angular/forms';
 import { AiService } from '../ai-service/ai.service';
 
+const exampleExercise = [
+  {
+    "sentence": "I love to _________ pizza on the weekends.",
+    "options": [
+      "eat",
+      "ate",
+      "eating"
+    ],
+    "answer": "eat"
+  },
+  {
+    "sentence": "My favorite dessert is __________.",
+    "options": [
+      "cake",
+      "caked",
+      "cakes"
+    ],
+    "answer": "cake"
+  },
+  {
+    "sentence": "I usually ____________ salad for lunch.",
+    "options": [
+      "have",
+      "had",
+      "having"
+    ],
+    "answer": "have"
+  },
+  {
+    "sentence": "I don't like ___________ seafood.",
+    "options": [
+      "eat",
+      "ate",
+      "eating"
+    ],
+    "answer": "eating"
+  },
+  {
+    "sentence": "My mom likes to ___________ homemade pasta.",
+    "options": [
+      "make",
+      "made",
+      "making"
+    ],
+    "answer": "make"
+  }
+]
+
 enum KnowledgeLevels {
   A1 = 'A1',
   A2 = 'A2',
@@ -14,7 +62,7 @@ enum KnowledgeLevels {
 
 enum Languages {
   EN = 'English',
-  DE = 'German',
+  // DE = 'German',
 }
 
 enum FavoriteTopics {
@@ -30,10 +78,10 @@ enum FavoriteTopics {
 }
 
 enum ExerciseTypes {
-  MATCHING = 'Matching',
   FILL_IN_THE_BLANK = 'Fill in the blank',
-  TRUE_FALSE = 'True/false',
   /*
+  TRUE_FALSE = 'True/false',
+  MATCHING = 'Matching',
   MULTIPLE_CHOICE = 'Multiple choice',
   OPEN_QUESTION = 'Open question',
   ESSAY = 'Essay',
@@ -49,7 +97,7 @@ function enumToIdValueArray(enumObject: any) {
   return Object.keys(enumObject).map(key => ({
     id: key,
     value: enumObject[key],
-    selected: false
+    selected: key === 'SPORTS'
   }));
 }
 
@@ -84,6 +132,10 @@ export class AppComponent {
   state = signal({
     selectedLanguage: Languages.EN,
     selectedKnowledgeLevel: KnowledgeLevels.A2,
+    exercise: exampleExercise,
+    isLoading: false,
+    initialLoad: true,
+    testDescription: 'A1, English'
   })
 
   selectKnowledgeLevel(knowledgeLevel: KnowledgeLevels) {
@@ -107,14 +159,26 @@ export class AppComponent {
     const exerciseType = this.form.exerciseType;
     const language = this.state().selectedLanguage;
     const knowledgeLevel = this.state().selectedKnowledgeLevel;
-
+    this.state.update((state: any) => ({
+      ...state,
+      isLoading: true
+    }));
     this.aiService.generateTest({
       favoriteTopics,
       exerciseType,
       language,
       knowledgeLevel
     }).subscribe((result: any) => {
-      console.log(result, 'result');
+      this.state.update((state: any) => ({
+        ...state,
+        exercise: result.completion.exercises,
+        testDescription: `${knowledgeLevel}, ${language}`,
+        isLoading: false
+      }));
     });
+  }
+
+  checkTest(): void {
+
   }
 }

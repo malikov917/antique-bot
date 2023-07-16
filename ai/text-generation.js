@@ -69,6 +69,56 @@ class OpenAISummarizer {
     }
   }
 
+  async generateExercise(requestBody) {
+
+    const prompt = ({ favoriteTopics, exerciseType, language, knowledgeLevel }) => `
+You are an intelligent assistant tasked with creating an English exercise for a language learner.
+The exercise type is '${exerciseType}'.
+The learner's favorite topics are ${(favoriteTopics || []).join(', ')}, and they are at an ${knowledgeLevel} level of ${language} proficiency.
+Return me 5 examples in JSON format only, no text before or after, pure JSON. JSON format example is:
+{
+ "exercises": [
+   {
+     "sentence": "I __________ to a concert last night.",
+     "options": ["went", "go", "gone"],
+     "answer": "went"
+   }
+ ]
+}`
+    const messages = (prompt) => [
+      {
+        "role": "system",
+        "content": prompt
+      }
+    ]
+
+    const { favoriteTopics, exerciseType, language, knowledgeLevel } = requestBody;
+
+    const response = await this.openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: messages(prompt({ favoriteTopics, exerciseType, language, knowledgeLevel })),
+      temperature: 1,
+      max_tokens: 2047,
+      top_p: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+    });
+
+    console.log(response.data.choices[0].message.content.trim());
+    const isJson = (str) => {
+      try {
+        JSON.parse(str);
+      } catch (e) {
+        return false;
+      }
+      return true;
+    }
+    if (!isJson(response.data.choices[0].message.content.trim())) {
+      throw new Error('Invalid JSON response from OpenAI');
+    }
+    return JSON.parse(response.data.choices[0].message.content.trim());
+  }
+
   trimRedundant(response) {
     const unprocessedResult = response.data.choices[0].text.trim();
     const startIndex = unprocessedResult.indexOf('{');

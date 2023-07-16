@@ -85,9 +85,19 @@ app.post('/ai/completion', async (req, res) => {
 
 app.post('/ai/generate-exercise', async (req, res) => {
     try {
-        const { prompt } = req.body;
+        const { favoriteTopics, exerciseType, language, knowledgeLevel } = req.body;
 
-        res.json({ completion: 'yo' });
+        if (!favoriteTopics || favoriteTopics.length < 1 || !exerciseType || !language || !knowledgeLevel) {
+            console.error('Missing required fields');
+            res.status(500).json({ error: 'Missing required fields' });
+            return;
+        }
+
+        const openaiApi = new OpenAISummarizer();
+
+        const completion = await openaiApi.generateExercise(req.body);
+
+        res.json({ completion });
     } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ error: 'Something went wrong' });
